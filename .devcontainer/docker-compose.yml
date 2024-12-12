@@ -8,8 +8,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
     command: sleep infinity
     env_file:
-      - common.env
-      - backend.env
+      - .env
     depends_on:
       - db
       - redis

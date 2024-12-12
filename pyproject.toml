@@ -175,7 +175,6 @@ exclude = [
   module = ["saleor.*.migrations.*"]
   ignore_errors = true
 
-
 [tool.ruff]
 target-version = "py39"
 
@@ -223,7 +222,10 @@ target-version = "py39"
     "E501", # Line too long
     "PT019", # Fixture without value is injected as parameter, use @pytest.mark.usefixtures instead
     "PYI041", # Use `float` instead of `int | float`
-    "RET504" # Unnecessary assignment before return statement
+    "RET504", # Unnecessary assignment before return statement
+    "I001", # Import block is un-sorted or un-formatted
+    "T203", # found
+    "D401" # noqa
   ]
 
   [tool.ruff.lint.flake8-pytest-style]
@@ -232,3 +234,4 @@ target-version = "py39"
 
   [tool.ruff.lint.isort]
   known-first-party = ["saleor"]
+

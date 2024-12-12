@@ -13992,6 +13992,11 @@ enum StaffMemberStatus @doc(category: "Users") {
 }
 
 type Mutation {
+  importUserData(
+    """A custom value to process."""
+    value: String!
+  ): ImportUserData
+
   """
   Creates a new webhook subscription. 
   
@@ -18724,6 +18729,11 @@ type Mutation {
     """ID of the group to delete."""
     id: ID!
   ): PermissionGroupDelete @doc(category: "Users") @webhookEventsInfo(asyncEvents: [PERMISSION_GROUP_DELETED], syncEvents: [])
+}
+
+type ImportUserData {
+  success: Boolean
+  message: String
 }
 
 """

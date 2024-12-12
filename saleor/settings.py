@@ -33,10 +33,8 @@ from .graphql.executor import patch_executor
 
 django_stubs_ext.monkeypatch()
 
-
 def get_list(text):
     return [item.strip() for item in text.split(",")]
-
 
 def get_bool_from_env(name, default_value):
     """Retrieve and convert an environment variable to a boolean object.
@@ -48,7 +46,6 @@ def get_bool_from_env(name, default_value):
         return default_value
     return value.lower() in ("true", "1")
 
-
 def get_url_from_env(name, *, schemes=None) -> Optional[str]:
     if name in os.environ:
         value = os.environ[name]
@@ -56,7 +53,6 @@ def get_url_from_env(name, *, schemes=None) -> Optional[str]:
         URLValidator(schemes=schemes, message=message)(value)
         return value
     return None
-
 
 DEBUG = get_bool_from_env("DEBUG", True)
 
@@ -305,6 +301,7 @@ INSTALLED_APPS = [
     "django_countries",
     "django_filters",
     "phonenumber_field",
+    "saleor.employee_store"
 ]
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
@@ -435,7 +432,6 @@ MAX_USER_ADDRESSES = int(os.environ.get("MAX_USER_ADDRESSES", 100))
 
 TEST_RUNNER = "saleor.tests.runner.PytestTestRunner"
 
-
 PLAYGROUND_ENABLED = get_bool_from_env("PLAYGROUND_ENABLED", True)
 
 ALLOWED_HOSTS = get_list(os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1"))
@@ -461,6 +457,10 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_DEFAULT_ACL = os.environ.get("AWS_DEFAULT_ACL", None)
 AWS_S3_FILE_OVERWRITE = get_bool_from_env("AWS_S3_FILE_OVERWRITE", True)
+
+AWS_DATA_ACCESS_KEY_ID = os.environ.get("AWS_DATA_ACCESS_KEY_ID")
+AWS_DATA_SECRET_ACCESS_KEY = os.environ.get("AWS_DATA_SECRET_ACCESS_KEY")
+AWS_DATA_BUCKET_NAME = os.environ.get("AWS_DATA_BUCKET_NAME")
 
 # Google Cloud Storage configuration
 # See https://django-storages.readthedocs.io/en/latest/backends/gcloud.html
@@ -523,7 +523,6 @@ PLACEHOLDER_IMAGES = {
     2048: "images/placeholder2048.png",
     4096: "images/placeholder4096.png",
 }
-
 
 AUTHENTICATION_BACKENDS = [
     "saleor.core.auth_backend.JSONWebTokenBackend",
@@ -659,6 +658,11 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": datetime.timedelta(seconds=BEAT_PRICE_RECALCULATION_SCHEDULE),
         "options": {"expires": BEAT_PRICE_RECALCULATION_SCHEDULE_EXPIRE_AFTER_SEC},
     },
+    #  'send-collect-order-reminder-emails': {
+    #     'task': 'saleor.plugins.employee_store.tasks.trigger_collect_order_reminder_emails',
+    #     'schedule': datetime.timedelta(seconds=30),
+    #     # 'schedule': crontab(minute='0', hour='8') # At 8am, every day
+    # }
 }
 
 # The maximum wait time between each is_due() call on schedulers
@@ -682,7 +686,6 @@ EVENT_DELIVERY_ATTEMPT_RESPONSE_SIZE_LIMIT = int(
 DELETE_APP_TTL = datetime.timedelta(
     seconds=parse(os.environ.get("DELETE_APP_TTL", "1 day"))
 )
-
 
 # Observability settings
 OBSERVABILITY_BROKER_URL = os.environ.get("OBSERVABILITY_BROKER_URL")
@@ -733,12 +736,10 @@ DEFAULT_CHANNEL_SLUG = os.environ.get("DEFAULT_CHANNEL_SLUG", "default-channel")
 # product.
 POPULATE_DEFAULTS = get_bool_from_env("POPULATE_DEFAULTS", True)
 
-
 #  Sentry
 sentry_sdk.utils.MAX_STRING_LENGTH = 4096  # type: ignore[attr-defined]
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
 SENTRY_OPTS = {"integrations": [CeleryIntegration(), DjangoIntegration()]}
-
 
 def SENTRY_INIT(dsn: str, sentry_opts: dict):
     """Init function for sentry.
@@ -749,7 +750,6 @@ def SENTRY_INIT(dsn: str, sentry_opts: dict):
     sentry_sdk.init(dsn, release=__version__, **sentry_opts)
     ignore_logger("graphql.execution.utils")
     ignore_logger("graphql.execution.executor")
-
 
 GRAPHQL_PAGINATION_LIMIT = 100
 GRAPHQL_MIDDLEWARE: list[str] = []
@@ -781,6 +781,7 @@ BUILTIN_PLUGINS = [
     "saleor.plugins.admin_email.plugin.AdminEmailPlugin",
     "saleor.plugins.sendgrid.plugin.SendgridEmailPlugin",
     "saleor.plugins.openid_connect.plugin.OpenIDConnectPlugin",
+
 ]
 
 # Plugin discovery
@@ -835,7 +836,6 @@ if JAEGER_HOST:
         validate=True,
     ).initialize_tracer()
 
-
 # Some cloud providers (Heroku) export REDIS_URL variable instead of CACHE_URL
 REDIS_URL = os.environ.get("REDIS_URL")
 if REDIS_URL:
@@ -853,7 +853,6 @@ JWT_TTL_APP_ACCESS = datetime.timedelta(
 JWT_TTL_REFRESH = datetime.timedelta(
     seconds=parse(os.environ.get("JWT_TTL_REFRESH", "30 days"))
 )
-
 
 JWT_TTL_REQUEST_EMAIL_CHANGE = datetime.timedelta(
     seconds=parse(os.environ.get("JWT_TTL_REQUEST_EMAIL_CHANGE", "1 hour")),
@@ -873,7 +872,6 @@ TRANSACTION_BATCH_FOR_RELEASING_FUNDS = os.environ.get(
     "TRANSACTION_BATCH_FOR_RELEASING_FUNDS", 60
 )
 
-
 # The maximum SearchVector expression count allowed per index SQL statement
 # If the count is exceeded, the expression list will be truncated
 INDEX_MAXIMUM_EXPR_COUNT = 4000
@@ -888,7 +886,6 @@ SEARCH_ORDERS_MAX_INDEXED_LINES = 100
 PRODUCT_MAX_INDEXED_ATTRIBUTES = 1000
 PRODUCT_MAX_INDEXED_ATTRIBUTE_VALUES = 100
 PRODUCT_MAX_INDEXED_VARIANTS = 1000
-
 
 # Patch SubscriberExecutionContext class from `graphql-core-legacy` package
 # to fix bug causing not returning errors for subscription queries.
@@ -919,7 +916,6 @@ CHECKOUT_WEBHOOK_EVENTS_CELERY_QUEUE_NAME = os.environ.get(
 ORDER_WEBHOOK_EVENTS_CELERY_QUEUE_NAME = os.environ.get(
     "ORDER_WEBHOOK_EVENTS_CELERY_QUEUE_NAME", WEBHOOK_CELERY_QUEUE_NAME
 )
-
 
 # Queue name for execution of collection product_updated events
 COLLECTION_PRODUCT_UPDATED_QUEUE_NAME = os.environ.get(
@@ -981,11 +977,9 @@ ENABLE_LIMITING_WEBHOOKS_FOR_IDENTICAL_PAYLOADS = get_bool_from_env(
     "ENABLE_LIMITING_WEBHOOKS_FOR_IDENTICAL_PAYLOADS", False
 )
 
-
 # Transaction items limit for PaymentGatewayInitialize / TransactionInitialize.
 # That setting limits the allowed number of transaction items for single entity.
 TRANSACTION_ITEMS_LIMIT = 100
-
 
 # Disable Django warnings regarding too long cache keys being incompatible with
 # memcached to avoid leaking key values.

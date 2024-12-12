@@ -49,8 +49,10 @@ from .warehouse.schema import (
 from .webhook.schema import WebhookMutations, WebhookQueries
 from .webhook.subscription_types import WEBHOOK_TYPES_MAP, Subscription
 
-API_PATH = SimpleLazyObject(lambda: reverse("api"))
+# TODO:: Work out if its poosible to load the employee_store schema without adding it here
+from .employee_store.schema import EmployeeStoreMutations
 
+API_PATH = SimpleLazyObject(lambda: reverse("api"))
 
 class Query(
     AccountQueries,
@@ -78,7 +80,6 @@ class Query(
 ):
     pass
 
-
 class Mutation(
     AccountMutations,
     AppMutations,
@@ -104,9 +105,9 @@ class Mutation(
     TaxMutations,
     WarehouseMutations,
     WebhookMutations,
+    EmployeeStoreMutations
 ):
     pass
-
 
 GraphQLDocDirective = graphql.GraphQLDirective(
     name="doc",
@@ -126,10 +127,8 @@ GraphQLDocDirective = graphql.GraphQLDirective(
     ],
 )
 
-
 def serialize_webhook_event(value):
     return value
-
 
 GraphQLWebhookEventAsyncType = GraphQLScalarType(
     name="WebhookEventTypeAsyncEnum",
@@ -182,10 +181,8 @@ schema = build_federated_schema(
     + [GraphQLDocDirective, GraphQLWebhookEventsInfoDirective],
 )
 
-
 def _fail(errors, **_kwargs) -> ExecutionResult:
     return ExecutionResult(errors=errors, invalid=True)
-
 
 class SaleorGraphQLBackend(GraphQLCoreBackend):
     def document_from_string(
@@ -210,6 +207,5 @@ class SaleorGraphQLBackend(GraphQLCoreBackend):
             document_ast=document_ast,
             execute=partial(execute, schema, document_ast, **self.execute_params),
         )
-
 
 backend = GraphQLCachedBackend(SaleorGraphQLBackend(), cache_map=CacheDict(1000))
