@@ -462,6 +462,9 @@ AWS_DATA_ACCESS_KEY_ID = os.environ.get("AWS_DATA_ACCESS_KEY_ID")
 AWS_DATA_SECRET_ACCESS_KEY = os.environ.get("AWS_DATA_SECRET_ACCESS_KEY")
 AWS_DATA_BUCKET_NAME = os.environ.get("AWS_DATA_BUCKET_NAME")
 
+AWS_WORKDOCS_INVENTORY_DOCUMENT_ID=os.environ.get("AWS_WORKDOCS_INVENTORY_DOCUMENT_ID")
+AWS_WORKDOCS_REGION=os.environ.get("AWS_WORKDOCS_REGION")
+
 # Google Cloud Storage configuration
 # See https://django-storages.readthedocs.io/en/latest/backends/gcloud.html
 GS_PROJECT_ID = os.environ.get("GS_PROJECT_ID")

@@ -1,7 +1,8 @@
 import graphene
 
-from .mutations.mutations import ImportUserData
+from .mutations.mutations import ImportEmployeeData
+from .mutations.mutations import ImportInventoryData
 
 class EmployeeStoreMutations(graphene.ObjectType):
-    # Base mutations
-    import_user_data = ImportUserData.Field()
+    import_employee_data = ImportEmployeeData.Field()
+    import_inventory_data = ImportInventoryData.Field()

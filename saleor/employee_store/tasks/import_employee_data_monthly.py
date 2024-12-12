@@ -112,7 +112,7 @@ def import_data():
         return True, email_report_message
     except Exception as e:
         email_report_message = "An error occurred while importing the monthly user file: "+str(e)
-        return False, e
+        return False, email_report_message
     finally:
         send_email_report("Monthly User Import Report", email_report_message, errors, created_count, updated_count, error_count)
 
