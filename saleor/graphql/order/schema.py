@@ -70,27 +70,22 @@ from .resolvers import (
 from .sorters import OrderSortField, OrderSortingInput
 from .types import Order, OrderCountableConnection, OrderEventCountableConnection
 
-
 def search_string_in_kwargs(kwargs: dict) -> bool:
     filter_search = kwargs.get("filter", {}).get("search", "") or ""
     return bool(filter_search.strip())
 
-
 def sort_field_from_kwargs(kwargs: dict) -> Optional[list[str]]:
     return kwargs.get("sort_by", {}).get("field") or None
-
 
 class OrderFilterInput(FilterInputObjectType):
     class Meta:
         doc_category = DOC_CATEGORY_ORDERS
         filterset_class = OrderFilter
 
-
 class OrderDraftFilterInput(FilterInputObjectType):
     class Meta:
         doc_category = DOC_CATEGORY_ORDERS
         filterset_class = DraftOrderFilter
-
 
 class OrderQueries(graphene.ObjectType):
     homepage_events = ConnectionField(
@@ -236,7 +231,6 @@ class OrderQueries(graphene.ObjectType):
     @staticmethod
     def resolve_order_by_token(_root, info: ResolveInfo, *, token):
         return resolve_order_by_token(info, token)
-
 
 class OrderMutations(graphene.ObjectType):
     draft_order_complete = DraftOrderComplete.Field()

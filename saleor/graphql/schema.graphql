@@ -13992,10 +13992,27 @@ enum StaffMemberStatus @doc(category: "Users") {
 }
 
 type Mutation {
-  importUserData(
-    """A custom value to process."""
-    value: String!
-  ): ImportUserData
+  importEmployeeData(
+    """The type of Import (Daily or Monthly)."""
+    importType: ImportTypeEnum!
+
+    """Whether the import is a manual update."""
+    manual: Boolean
+  ): ImportEmployeeData
+  importInventoryData(
+    """Whether the import is a manual update."""
+    manual: Boolean
+  ): ImportInventoryData
+
+  """
+  Fulfill orders. 
+  
+  Requires one of the following permissions: MANAGE_ORDERS.
+  """
+  orderBulkFulfill(
+    """List of orders IDs to fulfill."""
+    ids: [ID!]!
+  ): OrderBulkFulfill @doc(category: "Orders")
 
   """
   Creates a new webhook subscription. 
@@ -18731,9 +18748,31 @@ type Mutation {
   ): PermissionGroupDelete @doc(category: "Users") @webhookEventsInfo(asyncEvents: [PERMISSION_GROUP_DELETED], syncEvents: [])
 }
 
-type ImportUserData {
+type ImportEmployeeData {
   success: Boolean
   message: String
+}
+
+enum ImportTypeEnum {
+  DAILY
+  MONTHLY
+}
+
+type ImportInventoryData {
+  success: Boolean
+  message: String
+}
+
+"""
+Fulfill orders. 
+
+Requires one of the following permissions: MANAGE_ORDERS.
+"""
+type OrderBulkFulfill @doc(category: "Orders") {
+  """Returns how many objects were affected."""
+  count: Int!
+  orderErrors: [OrderError!]! @deprecated(reason: "This field will be removed in Saleor 4.0. Use `errors` field instead.")
+  errors: [OrderError!]!
 }
 
 """
